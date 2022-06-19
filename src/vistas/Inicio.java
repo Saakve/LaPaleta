@@ -1,6 +1,6 @@
 package vistas;
 
-import conexionDB.Conexion;
+import conexionDB.ConnectionToLapaletadb;
 import java.sql.*;
 /**
  *
@@ -182,7 +182,7 @@ public class Inicio extends javax.swing.JFrame {
         }
          
         try {
-            Conexion consulta = new Conexion();
+            ConnectionToLapaletadb consulta = new ConnectionToLapaletadb();
             PreparedStatement pst = consulta.connection.prepareStatement("SELECT * FROM usuario WHERE uUsuario = ? ");
             pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
@@ -203,7 +203,10 @@ public class Inicio extends javax.swing.JFrame {
                 }
             }
             
-            System.out.println("CORRECTO");//REDIRIGIR AL CASO DE USO DE CADA UNO
+            App app = new App(this, true);
+            this.setVisible(false);
+            app.setVisible(true);
+            this.setVisible(true);
             
         } catch (SQLException e) {
             System.out.println(e);
