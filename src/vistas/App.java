@@ -32,8 +32,9 @@ public class App extends javax.swing.JDialog {
         jbSearchxProductCategory = new javax.swing.JButton();
         jcbProductCategories = new javax.swing.JComboBox<>();
         jtfProductName = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollProducts = new javax.swing.JScrollPane();
         jtableProducts = new javax.swing.JTable();
+        jlAddProduct = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -114,25 +115,39 @@ public class App extends javax.swing.JDialog {
                 jtableProductsComponentResized(evt);
             }
         });
-        jScrollPane1.setViewportView(jtableProducts);
+        jScrollProducts.setViewportView(jtableProducts);
+
+        jlAddProduct.setFont(new java.awt.Font("Arial Narrow", 1, 36)); // NOI18N
+        jlAddProduct.setText("+");
+        jlAddProduct.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlAddProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlAddProductMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout contentLayout = new javax.swing.GroupLayout(content);
         content.setLayout(contentLayout);
         contentLayout.setHorizontalGroup(
             contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(contentLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jbSearchxProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jbSearchxProductCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jtfProductName)
-                    .addComponent(jcbProductCategories, 0, 460, Short.MAX_VALUE))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(contentLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jbSearchxProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jbSearchxProductCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jtfProductName)
+                            .addComponent(jcbProductCategories, 0, 460, Short.MAX_VALUE)))
+                    .addGroup(contentLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jlAddProduct)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentLayout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34))
         );
         contentLayout.setVerticalGroup(
@@ -142,13 +157,15 @@ public class App extends javax.swing.JDialog {
                 .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jtfProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbSearchxProductCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(17, 17, 17)
                 .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jbSearchxProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbProductCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addGap(33, 33, 33)
+                .addComponent(jScrollProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jlAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -184,6 +201,10 @@ public class App extends javax.swing.JDialog {
     private void jtableProductsComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jtableProductsComponentResized
         
     }//GEN-LAST:event_jtableProductsComponentResized
+
+    private void jlAddProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlAddProductMouseClicked
+        System.out.println("Button Clicked");
+    }//GEN-LAST:event_jlAddProductMouseClicked
 
     /**
      * @param args the command line arguments
@@ -230,11 +251,12 @@ public class App extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel content;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollProducts;
     private javax.swing.JButton jbHome;
     private javax.swing.JButton jbSearchxProductCategory;
     private javax.swing.JButton jbSearchxProductName;
     private javax.swing.JComboBox<String> jcbProductCategories;
+    private javax.swing.JLabel jlAddProduct;
     private javax.swing.JLabel jlName;
     private javax.swing.JLabel jlNow;
     private javax.swing.JTable jtableProducts;

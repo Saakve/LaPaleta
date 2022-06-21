@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * It controls all CRUD actions and comunicate with inventarioProducto table
+ * in lapaletadb
  * @author Saakve
  */
 public class StockController {
@@ -16,6 +17,9 @@ public class StockController {
     public static final int ERROR_COUNT = -2;
     public static final int INVALID_INDEX = -3;
 
+    /**
+     * Return the index of the last stock added.
+     */
     public static int getLastIndex() {
         String statement = "SELECT MAX({pkey}) FROM inventarioProducto"
                 .replace("{pkey}", ATTRIBUTES[0]);
@@ -34,7 +38,12 @@ public class StockController {
         return index;
     }
 
-    public static boolean addStock(int amount) {
+    /**
+     * Add a new stock to lapaletadb database
+     * @param amount
+     * @return A boolean value that represents if the product was added or not.
+     */
+    public static boolean add(int amount) {
         String statement = """
                            INSERT INTO inventarioProducto
                            ({columns}) 
@@ -57,7 +66,11 @@ public class StockController {
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
     }
 
-    public static Stock getStock(int index) {
+    /**
+     * Return a stock whose identifier is equal to index.
+     * @param index
+     */
+    public static Stock get(int index) {
         String statement = """
                            SELECT {columns} FROM inventarioProducto
                            WHERE {pkey} = {index}
@@ -85,6 +98,11 @@ public class StockController {
         return stock;
     }
 
+    /**
+     * Return a array with Stocks.
+     * @param lowerLimit A integer that represents a index to start
+     * @param upperLimit A integer that represents a index to end
+     */
     public static Stock[] getStocks(int lowerLimit, int upperLimit) {
         int offset = lowerLimit - 1;
         int rowcount = upperLimit - offset;
@@ -139,7 +157,13 @@ public class StockController {
         return numberOfStocks;
     }
     
-    public static boolean deleteStock(int index) {
+    /**
+     * Delete a stock from database.
+     *
+     * @param index A int value that represents the index of the stock
+     * @return A boolean value that represents if the stock was deleted or not
+     */
+    public static boolean delete(int index) {
         String statement = "DELETE from inventarioProducto WHERE {pkey} = {index}"
                            .replace("{pkey}", ATTRIBUTES[0])
                            .replace("{index}", Integer.toString(index));
@@ -152,6 +176,33 @@ public class StockController {
             
         } catch(SQLException e) {
             System.out.println("StockController.java says -> Error: " + e);
+        }
+        
+        return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
+    }
+    
+    /**
+     * Update a stock from database.
+     * 
+     * @param index A int value that represents the index of the stock
+     * @param amount A amount that will replace the old one.
+     * @return A boolean value that represents if the stock was updated or not.
+     */
+    public static boolean update(int index, int amount) {
+        String statement = "UPDATE inventarioproducto SET {1} = {amount} WHERE {0} = {pkey}";
+        statement = statement.replace("{0}", ATTRIBUTES[0]).replace("{pkey}", Integer.toString(index));
+        statement = statement.replace("{1}", ATTRIBUTES[1]).replace("{amount}", Integer.toString(amount));
+        
+        try {
+            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+            
+            if(cn.executeUpdate(statement)!= 1 ){
+                return ConnectionToLapaletadb.UPDATE_FAILED;
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("Stock.java says -> Error: " + e);
+            System.out.println("Statement: " + statement);
         }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;

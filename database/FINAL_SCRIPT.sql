@@ -87,7 +87,6 @@ insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) 
 insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) values ('Nieve de Jocote', 71, 'NieJoc', 58, 3);
 insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) values ('Nieve de Mora y piña', 61, 'NieMorYPiñ', 59, 3);
 insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) values ('Nieve de Limón', 87, 'NieLim', 60, 3);
-insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) values ('Nieve de Fresa', 28, 'NieFre', 61, 3);
 insert into producto (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) values ('Nieve de Tamarindo', 33, 'NieTam', 62, 3);
 
 CREATE TABLE categoria (

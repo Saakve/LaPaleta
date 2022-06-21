@@ -2,33 +2,66 @@ package controllers;
 
 import conexionDB.ConnectionToLapaletadb;
 import entities.Product;
-import entities.Stock;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
- * It controls all CRUD actions and comunicate with product table.
+ * It controls all CRUD actions and comunicate with producto table.
  * in lapaletadb
  * @author Saakve
  */
 public class ProductController {
-    public static final String[] ATTRIBUTES = {"producto_id", "ptNombre", "ptPrecio", "ptAlias", "invpCantidad", "ctgNombre"};
+    
+    public static final String[] ATTRIBUTES = {
+        "producto_id", 
+        "ptNombre", 
+        "ptPrecio", 
+        "ptAlias", 
+        "inventario_id", 
+        "categoria_id"
+    };
+    
     public static final int NEW_PRODUCT = -1;
     public static final int NOT_FOUND = -2;
     public static final int ERROR_COUNT = -3;
+    
+    private static String spreadAttributes(int lowerLimit, int upperLimit){
+        ArrayList<String> Attributes = new ArrayList<>();
+        
+        for (int i = lowerLimit; i <= upperLimit; i++) {
+            Attributes.add(ATTRIBUTES[i]);
+        }
+        
+        return String.join(", ", Attributes);
+    }
+    
+    /**
+     * Return a string with the attributes of product table.
+     * 
+     * For example: 
+     * SpreadAttributes(1);
+     * //-> "ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id"
+     * 
+     * @param lowerLimit A int that indicate where to start
+     */
+    private static String spreadAttributes(int lowerLimit){
+        ArrayList<String> Attributes = new ArrayList<>();
+        
+        for (int i = lowerLimit; i < ATTRIBUTES.length; i++) {
+            Attributes.add(ATTRIBUTES[i]);
+        }
+        
+        return String.join(", ", Attributes);
+    }
 
-    public static Product getProduct(int index) {
-        String statement
-                = """
-                SELECT {columns}
-                FROM producto 
-                INNER JOIN inventarioproducto USING (inventario_id)
-                INNER JOIN categoria USING (categoria_id)
-                WHERE {pkey} = {index}
-                """
-                        .replace("{columns}", String.join(", ", ATTRIBUTES))
-                        .replace("{pkey}", ATTRIBUTES[0])
-                        .replace("{index}", Integer.toString(index));
+    /**
+     * Return a product whose identifier is equal to index.
+     */
+    public static Product get(int index) {
+        String  statement = "SELECT * FROM producto WHERE {pkey} = {index}";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
+        statement = statement.replace("{index}", Integer.toString(index));
 
         try {
             ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
@@ -53,17 +86,17 @@ public class ProductController {
     }
 
     /**
-     * Search for a product that have same name and return its index. -1 is for
-     * not found.
+     * Search for a product that have same name and return its index. 
      *
      * @param name A string that represents the name of the product that will be
-     * searched
+     * searched.
      * @return A int that represents the index of the product.
+     *         -1 is for not found.
      */
-    public static int findProduct(String name) {
-        String statement = "SELECT {pkey} FROM producto WHERE ptNombre = '{name}'"
-                .replace("{pkey}", ATTRIBUTES[0])
-                .replace("{name}", name);
+    public static int find(String name) {
+        String statement = "SELECT {pkey} FROM producto WHERE ptNombre = '{name}'";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
+        statement = statement.replace("{name}", name);
 
         int index = 0;
 
@@ -82,6 +115,50 @@ public class ProductController {
         }
 
         return index;
+    }
+    
+    /**
+     * Search a product where its name, alias or index contains the specified
+     * pattern.
+     * 
+     * @param pattern A String that will be use to search.
+     * @return A ArrayList with products found.
+     *         Size 0 indicates no coincidence.
+     */
+    public static ArrayList<Product> search(String pattern){
+        ArrayList<Product> products = new ArrayList<>();
+        
+        String statement = """
+                           SELECT * FROM producto 
+                           WHERE {1} LIKE "%{pattern}%" OR 
+                                 {3} LIKE "%{pattern}%" OR 
+                                 {0} LIKE "%{pattern}%";
+                           """;
+        statement = statement.replace("{1}", ATTRIBUTES[1]);
+        statement = statement.replace("{3}", ATTRIBUTES[3]);
+        statement = statement.replace("{0}", ATTRIBUTES[0]);
+        statement = statement.replace("{pattern}", pattern);
+        
+        try {
+            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+            ResultSet coincidences = cn.executeQuery(statement);
+            
+            while(coincidences.next()) {
+                products.add(new Product(
+                        coincidences.getInt(ATTRIBUTES[0]), 
+                        coincidences.getString(ATTRIBUTES[1]), 
+                        coincidences.getDouble(ATTRIBUTES[2]), 
+                        coincidences.getString(ATTRIBUTES[3]), 
+                        coincidences.getInt(ATTRIBUTES[4]),
+                        coincidences.getInt(ATTRIBUTES[5])));
+            }
+            
+        } catch(SQLException e) {
+            System.out.println("ProductController.java says -> Error: " + e);
+            System.out.println("Statement: " + statement);
+        }
+        
+        return products;
     }
 
     public static int getNumberOfProducts() {
@@ -106,22 +183,21 @@ public class ProductController {
         return numberOfProducts;
     }
 
+    /**
+     * Return a array with Products.
+     * @param lowerLimit A integer that represents a index to start
+     * @param upperLimit A integer that represents a index to end
+     */
     public static Product[] getProducts(int lowerLimit, int upperLimit) {
         int offset = lowerLimit - 1;
         int rowcount = upperLimit - offset;
+        
         Product[] products = new Product[rowcount];
 
-        String statement
-                = """
-                SELECT {columns}
-                FROM producto 
-                INNER JOIN inventarioproducto USING (inventario_id)
-                INNER JOIN categoria USING (categoria_id)
-                LIMIT {offset}, {rowcount}
-                """
-                        .replace("{columns}", String.join(", ", ATTRIBUTES))
-                        .replace("{offset}", Integer.toString(offset))
-                        .replace("{rowcount}", Integer.toString(rowcount));
+        String statement = "SELECT * FROM producto LIMIT {offset}, {rowcount}";
+        statement = statement.replace("{offset}", Integer.toString(offset));
+        statement = statement.replace("{rowcount}", Integer.toString(rowcount));
+        
         try {
             ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             ResultSet productObjects = cn.executeQuery(statement);
@@ -149,19 +225,19 @@ public class ProductController {
     }
 
     /**
-     * Delete a product from the database.
+     * Delete a product from database.
      *
      * @param index A int value that represents the index of the product
-     * @return A boolean value that represents if the product was delete or not
+     * @return A boolean value that represents if the product was deleted or not
      */
-    public static boolean deleteProduct(int index) {
+    public static boolean delete(int index) {
         String statement = "DELETE FROM producto WHERE {pkey} = {index}"
                 .replace("{pkey}", ATTRIBUTES[0])
                 .replace("{index}", Integer.toString(index));
         try {
             ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
 
-            if (cn.executeUpdate(statement) != 1 || !StockController.deleteStock(index)) {
+            if (cn.executeUpdate(statement) != 1 || !StockController.delete(index)) {
                 return ConnectionToLapaletadb.UPDATE_FAILED;
             }
 
@@ -172,18 +248,27 @@ public class ProductController {
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
     }
 
-    public static boolean addProduct(Product newProduct) {
-        int inventory_id = Stock.addStock(newProduct.getAmount());
+    /**
+     * Add a new product to lapaletadb database
+     *
+     * @param newProduct A Product that will be added.
+     * @return A boolean value that represents if the product was added or not.
+     */
+    public static boolean add(Product newProduct) {
+        StockController.add(0);
+        int inventory_id = StockController.getLastIndex();
+        
         String statement = """
-                           INSERT INTO producto 
-                           (ptNombre, ptPrecio, ptAlias, inventario_id, categoria_id) 
+                           INSERT INTO producto ({ATTRIBUTES})
                            VALUES ('{name}', {price}, '{alias}', {inventory_id}, {category_id})
-                           """
-                .replace("{name}", newProduct.getName())
-                .replace("{price}", Double.toString(newProduct.getPrice()))
-                .replace("{alias}", newProduct.getAlias())
-                .replace("{inventory_id}", Integer.toString(inventory_id))
-                .replace("{category_id}",Integer.toString(newProduct.getCategory()));
+                           """;
+        
+        statement = statement.replace("{ATTRIBUTES}", spreadAttributes(1));
+        statement = statement.replace("{name}", newProduct.getName());
+        statement = statement.replace("{price}", Double.toString(newProduct.getPrice()));
+        statement = statement.replace("{alias}", newProduct.getAlias());
+        statement = statement.replace("{inventory_id}", Integer.toString(inventory_id));
+        statement = statement.replace("{category_id}",Integer.toString(newProduct.getCategoryId()));
 
         try {
             ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
@@ -196,15 +281,49 @@ public class ProductController {
         } catch (SQLException e) {
             System.out.println("ProductController.java says -> Error: " + e);
             System.out.println("Statement: " + statement);
+            return ConnectionToLapaletadb.UPDATE_FAILED;
         }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
     }
     
-    public static boolean updateProduct(int index, Product newProduct){
-        String statement = "";
+    /**
+     * Update a product from database.
+     * 
+     * @param index A int value that represents the index of the product
+     * @param newProduct A product that will replace the old one.
+     * @return A boolean value that represents if the product was updated or not.
+     */
+    public static boolean update(int index, Product newProduct){
+        String statement = """
+                           UPDATE producto
+                           SET {1} = "{name}",
+                               {2} = {price},
+                               {3} = "{alias}",
+                               {4} = {inventory_id}, 
+                               {5} = {category_id}
+                           WHERE {0} = {pkey};
+                           """;
+        statement = statement.replace("{0}",ATTRIBUTES[0]).replace("{pkey}", Integer.toString(newProduct.getProductId()));
+        statement = statement.replace("{1}", ATTRIBUTES[1]).replace("{name}", newProduct.getName());
+        statement = statement.replace("{2}", ATTRIBUTES[2]).replace("{price}", Double.toString(newProduct.getPrice()));
+        statement = statement.replace("{3}", ATTRIBUTES[3]).replace("{alias}",newProduct.getAlias());
+        statement = statement.replace("{4}", ATTRIBUTES[4]).replace("{inventory_id}", Integer.toString(newProduct.getInventoryId()));
+        statement = statement.replace("{5}", ATTRIBUTES[5]).replace("{category_id}", Integer.toString(newProduct.getCategoryId()));
+        
+        try {
+            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+            
+            if(cn.executeUpdate(statement) != 1){
+                return ConnectionToLapaletadb.UPDATE_FAILED;
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("ProductController.java says -> Error: " + e);
+            System.out.println("Statement: " + statement);
+            return ConnectionToLapaletadb.UPDATE_FAILED;
+        }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
     }
-
 }

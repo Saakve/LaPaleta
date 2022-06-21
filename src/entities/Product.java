@@ -1,33 +1,37 @@
 package entities;
+
 import controllers.ProductController;
+
 /**
- *
+ * It's used to represent a Product.
+ * A new Product or some one from database.
  * @author Saakve
  */
 public class Product {
     
-    private int product_id;
+    private int productId;
     private String name;
     private double price;
     private String alias;
-    private int amount;
-    private int category;
+    private int inventoryId;
+    private int categoryId;
+    
     /**
      * Create a product that represents a product of the database.
-     * @param product_id
+     * @param productId
      * @param name
      * @param price
      * @param alias
-     * @param amount
-     * @param category 
+     * @param inventoryId A identifier of category table
+     * @param categoryId A identifier of inventory table
      */
-    public Product(int product_id, String name, double price, String alias, int amount, int category) {
-        this.product_id = product_id;
+    public Product(int productId, String name, double price, String alias, int inventoryId, int categoryId) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
         this.alias = alias;
-        this.amount = amount;
-        this.category = category;
+        this.inventoryId = inventoryId;
+        this.categoryId = categoryId;
     }
     
     /**
@@ -35,31 +39,30 @@ public class Product {
      * @param name
      * @param price
      * @param alias
-     * @param category 
+     * @param categoryId A identifier of category table
      */
-    public Product(String name, double price, String alias, int category) {
-        this.product_id = ProductController.NEW_PRODUCT;
+    public Product(String name, double price, String alias, int categoryId) {
+        this.productId = ProductController.NEW_PRODUCT;
         this.name = name;
         this.price = price;
         this.alias = alias;
-        this.amount = 0;
-        this.category = category;
+        this.categoryId = categoryId;
     }
     
     /**
      * Create a product that represents a product not found.
      */
     public Product(){
-        product_id = ProductController.NOT_FOUND;
+        productId = ProductController.NOT_FOUND;
         name = "";
         price = 0.0;
         alias = "";
-        amount = 0;
-        category = -1;
+        categoryId = -1;
+        inventoryId = -1;
     }
 
-    public int getProduct_id() {
-        return product_id;
+    public int getProductId() {
+        return productId;
     }
 
     public String getName() {
@@ -85,20 +88,32 @@ public class Product {
     public void setAlias(String newAlias) {
         this.alias = newAlias;
     }
-
-    public int getAmount() {
-        return amount;
+    
+    /**
+     * @return A identifier of inventory table
+     */
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setAmount(int newAmount) {
-        this.amount = newAmount;
+    /**
+     * @param categoryId A identifier of category table
+     */
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
-
-    public int getCategory() {
-        return category;
+    
+    /**
+     * @return A identifier of inventory table
+     */
+    public int getInventoryId(){
+        return inventoryId;
     }
-
-    public void setCategory(int newCategory) {
-        this.category = newCategory;
+    
+    /**
+     * @param inventoryId A identifier of category table
+     */
+    public void setInventoryId(int inventoryId){
+        this.inventoryId = inventoryId;
     }
 }
