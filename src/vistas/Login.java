@@ -2,24 +2,18 @@ package vistas;
 
 import conexionDB.ConnectionToLapaletadb;
 import java.sql.*;
+import javax.swing.JDialog;
+
 /**
  *
  * @author Saske
  */
-public class Inicio extends javax.swing.JFrame { 
-    private final javax.swing.border.Border PADDING_FIELD = javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3);
-    private final javax.swing.border.Border BORDERLINE_FIELD = javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153,153,153));
-    private final javax.swing.border.Border BORDER = javax.swing.BorderFactory.createCompoundBorder(BORDERLINE_FIELD, PADDING_FIELD);
-    private final javax.swing.border.Border BORDERLINE_FIELD_EXCEPTION = javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0));
-    private final javax.swing.border.Border BORDER_EXCEPTION = javax.swing.BorderFactory.createCompoundBorder(BORDERLINE_FIELD_EXCEPTION, PADDING_FIELD);
-    private final String DATOS_INCORRECTOS = "Usuario o contraseña incorrectos";
-    private final String CAMPOS_VACIOS = "Rellene los campos vacíos";
-
-
+public class Login extends javax.swing.JFrame implements Messages{ 
+    
     /**
      * Creates new form Inicio
      */
-    public Inicio() {
+    public Login() {
         initComponents();
     }
 
@@ -32,7 +26,7 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
+        content = new javax.swing.JPanel();
         jlPlaceholderUser = new javax.swing.JLabel();
         jlPlaceholderPassword = new javax.swing.JLabel();
         jlTitle = new javax.swing.JLabel();
@@ -41,9 +35,9 @@ public class Inicio extends javax.swing.JFrame {
         jpfPassword = new javax.swing.JPasswordField();
         jbInicio = new javax.swing.JButton();
         jlExcepcion = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        title = new javax.swing.JPanel();
+        jlTitleOne = new javax.swing.JLabel();
+        jlTitleTwo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Inicio");
@@ -53,28 +47,28 @@ public class Inicio extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(731, 409));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setPreferredSize(new java.awt.Dimension(350, 392));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        content.setBackground(new java.awt.Color(255, 255, 255));
+        content.setPreferredSize(new java.awt.Dimension(350, 392));
+        content.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jlPlaceholderUser.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jlPlaceholderUser.setForeground(new java.awt.Color(204, 204, 204));
         jlPlaceholderUser.setText(" Usuario");
-        jPanel2.add(jlPlaceholderUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
+        content.add(jlPlaceholderUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
 
         jlPlaceholderPassword.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jlPlaceholderPassword.setForeground(new java.awt.Color(204, 204, 204));
         jlPlaceholderPassword.setText(" Contraseña");
-        jPanel2.add(jlPlaceholderPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
+        content.add(jlPlaceholderPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
 
         jlTitle.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jlTitle.setText("Bienvenido");
-        jPanel2.add(jlTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 70, -1, -1));
+        content.add(jlTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 70, -1, -1));
 
         jlTittle.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jlTittle.setForeground(new java.awt.Color(102, 255, 255));
         jlTittle.setText("Paletero");
-        jPanel2.add(jlTittle, new org.netbeans.lib.awtextra.AbsoluteConstraints(221, 70, -1, -1));
+        content.add(jlTittle, new org.netbeans.lib.awtextra.AbsoluteConstraints(221, 70, -1, -1));
 
         jtfUsername.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jtfUsername.setForeground(new java.awt.Color(102, 102, 102));
@@ -84,7 +78,7 @@ public class Inicio extends javax.swing.JFrame {
                 jtfUsernameKeyReleased(evt);
             }
         });
-        jPanel2.add(jtfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
+        content.add(jtfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
 
         jpfPassword.setBorder(BORDER);
         jpfPassword.addActionListener(new java.awt.event.ActionListener() {
@@ -97,7 +91,7 @@ public class Inicio extends javax.swing.JFrame {
                 jpfPasswordKeyReleased(evt);
             }
         });
-        jPanel2.add(jpfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
+        content.add(jpfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
 
         jbInicio.setBackground(new java.awt.Color(0, 204, 204));
         jbInicio.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
@@ -114,46 +108,46 @@ public class Inicio extends javax.swing.JFrame {
                 jbInicioActionPerformed(evt);
             }
         });
-        jPanel2.add(jbInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(149, 289, -1, -1));
+        content.add(jbInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(149, 289, -1, -1));
 
         jlExcepcion.setForeground(new java.awt.Color(255, 0, 0));
-        jPanel2.add(jlExcepcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, -1, 20));
+        content.add(jlExcepcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, -1, 20));
         jlExcepcion.setVisible(false);
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 381, 409));
+        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 381, 409));
 
-        jPanel1.setBackground(new java.awt.Color(255, 153, 255));
+        title.setBackground(new java.awt.Color(255, 153, 255));
 
-        jLabel3.setFont(new java.awt.Font("Open Sans Semibold", 0, 36)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("venta");
+        jlTitleOne.setFont(new java.awt.Font("Open Sans Semibold", 0, 36)); // NOI18N
+        jlTitleOne.setForeground(new java.awt.Color(255, 255, 255));
+        jlTitleOne.setText("venta");
 
-        jLabel4.setFont(new java.awt.Font("Open Sans Semibold", 0, 36)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Sistema punto de");
+        jlTitleTwo.setFont(new java.awt.Font("Open Sans Semibold", 0, 36)); // NOI18N
+        jlTitleTwo.setForeground(new java.awt.Color(255, 255, 255));
+        jlTitleTwo.setText("Sistema punto de");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout titleLayout = new javax.swing.GroupLayout(title);
+        title.setLayout(titleLayout);
+        titleLayout.setHorizontalGroup(
+            titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                .addGroup(titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jlTitleOne)
+                    .addComponent(jlTitleTwo))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        titleLayout.setVerticalGroup(
+            titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(jLabel4)
+                .addComponent(jlTitleTwo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jlTitleOne, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(276, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 409));
+        getContentPane().add(title, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 409));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -167,7 +161,7 @@ public class Inicio extends javax.swing.JFrame {
         if(password.length == 0) flujo += 2;
         
         if(flujo > 0){
-            jlExcepcion.setText(CAMPOS_VACIOS);
+            jlExcepcion.setText(EMPTY_INPUT);
             jlExcepcion.setVisible(true);
             
             switch (flujo) {
@@ -183,12 +177,12 @@ public class Inicio extends javax.swing.JFrame {
          
         try {
             ConnectionToLapaletadb consulta = new ConnectionToLapaletadb();
-            PreparedStatement pst = consulta.connection.prepareStatement("SELECT * FROM usuario WHERE uUsuario = ? ");
-            pst.setString(1, username);
-            ResultSet rs = pst.executeQuery();
+            String statement = "SELECT * FROM usuario WHERE uUsuario = '{?}' ";
+            statement = statement.replace("{?}", username);
+            ResultSet rs = consulta.executeQuery(statement);
             
             if (!rs.next()) {
-                jlExcepcion.setText(DATOS_INCORRECTOS);
+                jlExcepcion.setText(ERROR_LOGIN);
                 jlExcepcion.setVisible(true);
                 return;
             }
@@ -197,15 +191,16 @@ public class Inicio extends javax.swing.JFrame {
                 
             for (int i = 0; i < password.length; i++) {
                 if(password[i] != realPassword.charAt(i)){
-                    jlExcepcion.setText(DATOS_INCORRECTOS);
+                    jlExcepcion.setText(ERROR_LOGIN);
                     jlExcepcion.setVisible(true);
                     return;
                 }
             }
             
-            App app = new App(this, true);
+            App app = new App(this, false);
             this.setVisible(false);
             app.setVisible(true);
+            app.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             this.setVisible(true);
             
         } catch (SQLException e) {
@@ -250,36 +245,37 @@ public class Inicio extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Inicio().setVisible(true);
+                new Login().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel content;
     private javax.swing.JButton jbInicio;
     private javax.swing.JLabel jlExcepcion;
     private javax.swing.JLabel jlPlaceholderPassword;
     private javax.swing.JLabel jlPlaceholderUser;
     private javax.swing.JLabel jlTitle;
+    private javax.swing.JLabel jlTitleOne;
+    private javax.swing.JLabel jlTitleTwo;
     private javax.swing.JLabel jlTittle;
     private javax.swing.JPasswordField jpfPassword;
     private javax.swing.JTextField jtfUsername;
+    private javax.swing.JPanel title;
     // End of variables declaration//GEN-END:variables
 }

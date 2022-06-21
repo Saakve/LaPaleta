@@ -1,6 +1,8 @@
 package conexionDB;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * It's a wraper to Coneection and connects to lapaletadb database.
@@ -9,7 +11,7 @@ import java.sql.*;
 public class ConnectionToLapaletadb {
     public static final boolean UPDATE_SUCCESSFULL = true;
     public static final boolean UPDATE_FAILED = false;
-    public Connection connection;
+    private Connection connection;
     
     private String user = "root";
     private String password = "";
@@ -72,4 +74,11 @@ public class ConnectionToLapaletadb {
         return prepareStatement(statement).executeUpdate();
     }
     
+    public void close () {
+        try {
+            connection.close();
+        } catch (SQLException ex) {
+            System.out.println("Conexion.java says -> ERROR" + ex);
+        }
+    }
 }

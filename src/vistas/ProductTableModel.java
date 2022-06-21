@@ -1,52 +1,40 @@
 package vistas;
 
-import conexionDB.ConnectionToLapaletadb;
+import controllers.CategoryController;
+import controllers.StockController;
+import entities.Product;
+import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
-import java.sql.*;
 
 /**
  *
  * @author Saakve
  */
-public class ProductTableModel extends AbstractTableModel {
-    private int numberOfRows = 15;
-    private String[] columnNames = {"Clave", "Nombre", "Precio", "Alias","Cantidad", "Categoria"};
+public class ProductTableModel extends AbstractTableModel{
+    private String[] columnNames = {"Clave", "Nombre", "Precio", "Alias", "Cantidad", "Categoria"};
+    private int numberOfRows;
+    private Object[][] rows;
+    private ArrayList<Product> products;
     
-    private Object[][] rows = new Object [numberOfRows][columnNames.length];
-    
-    public ProductTableModel() {
-        try {
-            String attributes[] = {"producto_id", "ptNombre", "ptPrecio", "ptAlias", "invpCantidad", "ctgNombre"};
-            String statement = """
-                               SELECT {columns}
-                               FROM producto 
-                               INNER JOIN inventarioproducto USING (inventario_id)
-                               INNER JOIN categoria USING (categoria_id)
-                               LIMIT {numberOfRows}
-                               """.replace("{columns}", String.join(", ", attributes))
-                                  .replace("{numberOfRows}",String.valueOf(numberOfRows));
-            
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
-            ResultSet products = cn.executeQuery(statement);
-            
-            byte product = 0;
-            while(products.next()){
-                for (int attribute = 0; attribute < attributes.length; attribute++) {
-                    rows[product][attribute] = products.getString(attributes[attribute]);
-                }
-                product++;
-            }
-            
-        } catch (SQLException e){
-            for (int i = 0; i < rows.length; i++) {
-                for (int j = 0; j < rows[0].length; j++) {
-                    rows[i][j] = "Error";
-                }
-            }
-            System.out.println(e);
+    public ProductTableModel(ArrayList<Product> products) {
+        this.products = products;
+        numberOfRows = products.size();
+        rows = new Object [numberOfRows][columnNames.length];
+        
+        for (int product = 0; product < numberOfRows; product++) {
+            rows[product][0] = products.get(product).getProductId();
+            rows[product][1] = products.get(product).getName();
+            rows[product][2] = products.get(product).getPrice();
+            rows[product][3] = products.get(product).getAlias();
+            rows[product][4] = StockController.get(products.get(product).getInventoryId()).getAmount();
+            rows[product][5] = CategoryController.getCategory(products.get(product).getCategoryId()).getName();
         }
     }
 
+    public ArrayList<Product> getProducts(){
+        return products;
+    }
+    
     @Override
     public int getRowCount() {
         return rows.length;
@@ -66,5 +54,8 @@ public class ProductTableModel extends AbstractTableModel {
     public String getColumnName(int col) {
             return columnNames[col];
     }
-
+    
+    public void fireTableRowsDeleted(){
+        super.fireTableRowsDeleted(numberOfRows, numberOfRows);
+    }
 }

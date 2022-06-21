@@ -24,8 +24,9 @@ public class StockController {
         String statement = "SELECT MAX({pkey}) FROM inventarioProducto"
                 .replace("{pkey}", ATTRIBUTES[0]);
         int index = 0;
+        
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             ResultSet lastIndexObject = cn.executeQuery(statement);
             if (!lastIndexObject.next()) {
                 return INVALID_INDEX;
@@ -34,7 +35,10 @@ public class StockController {
 
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Error: " + e);
+        } finally {
+            cn.close();
         }
+        
         return index;
     }
 
@@ -48,19 +52,20 @@ public class StockController {
                            INSERT INTO inventarioProducto
                            ({columns}) 
                            VALUES ({amount})
-                           """
-                .replace("{columns}", ATTRIBUTES[1])
-                .replace("{amount}", Integer.toString(amount));
+                           """;
+        statement = statement.replace("{columns}", ATTRIBUTES[1]);
+        statement = statement.replace("{amount}", Integer.toString(amount));
 
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             if (cn.executeUpdate(statement) != 1) {
                 return ConnectionToLapaletadb.UPDATE_FAILED;
             }
 
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Error: " + e);
+        } finally {
+            cn.close();
         }
 
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
@@ -74,15 +79,15 @@ public class StockController {
         String statement = """
                            SELECT {columns} FROM inventarioProducto
                            WHERE {pkey} = {index}
-                           """
-                .replace("{columns}", String.join(", ", ATTRIBUTES))
-                .replace("{pkey}", ATTRIBUTES[0])
-                .replace("{index}", Integer.toString(index));
+                           """;
+        statement = statement.replace("{columns}", String.join(", ", ATTRIBUTES));
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]); 
+        statement = statement.replace("{index}", Integer.toString(index));
 
         Stock stock = new Stock();
 
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             ResultSet stockObject = cn.executeQuery(statement);
 
             if (!stockObject.next()) {
@@ -93,6 +98,8 @@ public class StockController {
 
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Erro: " + e);
+        } finally {
+            cn.close();
         }
 
         return stock;
@@ -108,17 +115,17 @@ public class StockController {
         int rowcount = upperLimit - offset;
         Stock[] stocks = new Stock[rowcount];
 
-        String statement
-                = """
-                SELECT {columns}
-                FROM inventarioProducto
-                LIMIT {offset}, {rowcount}
-                """
-                        .replace("{columns}", String.join(", ", ATTRIBUTES))
-                        .replace("{offset}", Integer.toString(offset))
-                        .replace("{rowcount}", Integer.toString(rowcount));
+        String statement = """
+                           SELECT {columns}
+                           FROM inventarioProducto
+                           LIMIT {offset}, {rowcount}
+                           """;
+        statement = statement.replace("{columns}", String.join(", ", ATTRIBUTES));
+        statement = statement.replace("{offset}", Integer.toString(offset));
+        statement = statement.replace("{rowcount}", Integer.toString(rowcount));
+        
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             ResultSet stockObjects = cn.executeQuery(statement);
 
             if (stockObjects.next()) {
@@ -131,6 +138,8 @@ public class StockController {
 
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Error: " + e);
+        } finally {
+            cn.close();
         }
 
         return stocks;
@@ -140,8 +149,8 @@ public class StockController {
         String statement = "SELECT COUNT(*) FROM inventarioProducto";
         int numberOfStocks = 0;
 
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
             ResultSet numberOfStocksObject = cn.executeQuery(statement);
 
             if (!numberOfStocksObject.next()) {
@@ -152,6 +161,8 @@ public class StockController {
 
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Erro: " + e);
+        } finally {
+            cn.close();
         }
 
         return numberOfStocks;
@@ -164,18 +175,20 @@ public class StockController {
      * @return A boolean value that represents if the stock was deleted or not
      */
     public static boolean delete(int index) {
-        String statement = "DELETE from inventarioProducto WHERE {pkey} = {index}"
-                           .replace("{pkey}", ATTRIBUTES[0])
-                           .replace("{index}", Integer.toString(index));
+        String statement = "DELETE from inventarioProducto WHERE {pkey} = {index}";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
+        statement = statement.replace("{index}", Integer.toString(index));
+        
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
-            
             if(cn.executeUpdate(statement) != 1) {
                 return ConnectionToLapaletadb.UPDATE_FAILED;
             }
             
         } catch(SQLException e) {
             System.out.println("StockController.java says -> Error: " + e);
+        } finally {
+            cn.close();
         }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
@@ -193,9 +206,8 @@ public class StockController {
         statement = statement.replace("{0}", ATTRIBUTES[0]).replace("{pkey}", Integer.toString(index));
         statement = statement.replace("{1}", ATTRIBUTES[1]).replace("{amount}", Integer.toString(amount));
         
-        try {
-            ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
-            
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+        try {   
             if(cn.executeUpdate(statement)!= 1 ){
                 return ConnectionToLapaletadb.UPDATE_FAILED;
             }
@@ -203,6 +215,8 @@ public class StockController {
         } catch (SQLException e) {
             System.out.println("Stock.java says -> Error: " + e);
             System.out.println("Statement: " + statement);
+        } finally {
+            cn.close();
         }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;

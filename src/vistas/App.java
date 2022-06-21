@@ -1,13 +1,21 @@
 package vistas;
 
+import controllers.CategoryController;
+import controllers.ProductController;
+import entities.Product;
+import java.util.ArrayList;
+import javax.swing.JDialog;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Saske
  */
-public class App extends javax.swing.JDialog {
+public class App extends javax.swing.JDialog implements Messages{
 
     /**
-     * Creates new form Producto
+     * Creates new form App
      */
     public App(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -28,18 +36,24 @@ public class App extends javax.swing.JDialog {
         jlNow = new javax.swing.JLabel();
         jbHome = new javax.swing.JButton();
         content = new javax.swing.JPanel();
-        jbSearchxProductName = new javax.swing.JButton();
-        jbSearchxProductCategory = new javax.swing.JButton();
-        jcbProductCategories = new javax.swing.JComboBox<>();
-        jtfProductName = new javax.swing.JTextField();
+        jbSearchByCategory = new javax.swing.JButton();
+        jbSearchByPattern = new javax.swing.JButton();
+        jcbCategory = new javax.swing.JComboBox<>();
+        jtfPattern = new javax.swing.JTextField();
         jScrollProducts = new javax.swing.JScrollPane();
         jtableProducts = new javax.swing.JTable();
         jlAddProduct = new javax.swing.JLabel();
+        jlException = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         menuBar.setBackground(new java.awt.Color(20, 208, 208));
+        menuBar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        menuBar.add(jlName, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 43, -1, -1));
+        menuBar.add(jlNow, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         jbHome.setBackground(new java.awt.Color(255, 255, 255));
         jbHome.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\home.png")); // NOI18N
@@ -52,70 +66,62 @@ public class App extends javax.swing.JDialog {
                 jbHomeActionPerformed(evt);
             }
         });
+        menuBar.add(jbHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 0, 38, 31));
 
-        javax.swing.GroupLayout menuBarLayout = new javax.swing.GroupLayout(menuBar);
-        menuBar.setLayout(menuBarLayout);
-        menuBarLayout.setHorizontalGroup(
-            menuBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menuBarLayout.createSequentialGroup()
-                .addComponent(jlNow)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuBarLayout.createSequentialGroup()
-                .addContainerGap(309, Short.MAX_VALUE)
-                .addComponent(jbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(309, 309, 309))
-            .addGroup(menuBarLayout.createSequentialGroup()
-                .addComponent(jlName)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        menuBarLayout.setVerticalGroup(
-            menuBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuBarLayout.createSequentialGroup()
-                .addComponent(jlNow)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jlName)
-                .addGap(8, 8, 8))
-        );
+        getContentPane().add(menuBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 663, 34));
 
         content.setBackground(new java.awt.Color(255, 255, 255));
+        content.setMaximumSize(new java.awt.Dimension(659, 442));
+        content.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jbSearchxProductName.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
-        jbSearchxProductName.setContentAreaFilled(false);
-        jbSearchxProductName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        jbSearchxProductCategory.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
-        jbSearchxProductCategory.setContentAreaFilled(false);
-        jbSearchxProductCategory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jbSearchxProductCategory.addActionListener(new java.awt.event.ActionListener() {
+        jbSearchByCategory.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
+        jbSearchByCategory.setContentAreaFilled(false);
+        jbSearchByCategory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbSearchByCategory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbSearchxProductCategoryActionPerformed(evt);
+                jbSearchByCategoryActionPerformed(evt);
             }
         });
+        content.add(jbSearchByCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 29, 29));
 
-        jcbProductCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jcbProductCategories.setLightWeightPopupEnabled(false);
-
-        jtfProductName.addActionListener(new java.awt.event.ActionListener() {
+        jbSearchByPattern.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
+        jbSearchByPattern.setContentAreaFilled(false);
+        jbSearchByPattern.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbSearchByPattern.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfProductNameActionPerformed(evt);
+                jbSearchByPatternActionPerformed(evt);
             }
         });
+        content.add(jbSearchByPattern, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, 29, 29));
 
-        jtableProducts.setModel(new vistas.ProductTableModel());
+        jcbCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {CategoryController.getCategory(1).getName(),CategoryController.getCategory(2).getName(),CategoryController.getCategory(3).getName()}));
+        jcbCategory.setLightWeightPopupEnabled(false);
+        content.add(jcbCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, 460, 29));
+
+        jtfPattern.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtfPatternKeyReleased(evt);
+            }
+        });
+        content.add(jtfPattern, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 460, 29));
+
+        jtableProducts.setModel(new vistas.ProductTableModel(ProductController.getProducts(1, 15)));
         jtableProducts.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtableProducts.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jtableProducts.setRowHeight(20);
+        jtableProducts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jtableProducts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jtableProducts.getTableHeader().setResizingAllowed(false);
         jtableProducts.getTableHeader().setReorderingAllowed(false);
         jtableProducts.setVerifyInputWhenFocusTarget(false);
-        jtableProducts.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                jtableProductsComponentResized(evt);
+        jtableProducts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtableProductsMouseClicked(evt);
             }
         });
         jScrollProducts.setViewportView(jtableProducts);
+
+        content.add(jScrollProducts, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 589, 285));
 
         jlAddProduct.setFont(new java.awt.Font("Arial Narrow", 1, 36)); // NOI18N
         jlAddProduct.setText("+");
@@ -125,63 +131,12 @@ public class App extends javax.swing.JDialog {
                 jlAddProductMouseClicked(evt);
             }
         });
+        content.add(jlAddProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, -1, 17));
 
-        javax.swing.GroupLayout contentLayout = new javax.swing.GroupLayout(content);
-        content.setLayout(contentLayout);
-        contentLayout.setHorizontalGroup(
-            contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contentLayout.createSequentialGroup()
-                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(contentLayout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(jbSearchxProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jbSearchxProductCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jtfProductName)
-                            .addComponent(jcbProductCategories, 0, 460, Short.MAX_VALUE)))
-                    .addGroup(contentLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jlAddProduct)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34))
-        );
-        contentLayout.setVerticalGroup(
-            contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contentLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jtfProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jbSearchxProductCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
-                .addGroup(contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jbSearchxProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcbProductCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
-                .addComponent(jScrollProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jlAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jlException.setForeground(new java.awt.Color(255, 0, 0));
+        content.add(jlException, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, -1, 20));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menuBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(content, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(menuBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(content, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 34, 663, 490));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -190,21 +145,48 @@ public class App extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jbHomeActionPerformed
 
-    private void jbSearchxProductCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSearchxProductCategoryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbSearchxProductCategoryActionPerformed
-
-    private void jtfProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfProductNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfProductNameActionPerformed
-
-    private void jtableProductsComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jtableProductsComponentResized
-        
-    }//GEN-LAST:event_jtableProductsComponentResized
-
     private void jlAddProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlAddProductMouseClicked
-        System.out.println("Button Clicked");
+        AddProduct addProduct = new AddProduct(this, true);
+        addProduct.setVisible(true);
+        addProduct.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        DefaultTableModel newModel = (DefaultTableModel) jtableProducts.getModel();
+        Object nuevo[] = {1,2,3,4,5,6};
+        newModel.addRow(nuevo);
     }//GEN-LAST:event_jlAddProductMouseClicked
+
+    private void jbSearchByPatternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSearchByPatternActionPerformed
+        String pattern = jtfPattern.getText();
+        try {
+            if(pattern.length() == 0) throw new Exception("EMPTY_INPUT");
+        } catch(Exception e) {
+            jtfPattern.setBorder(BORDER_EXCEPTION);
+            jlException.setText(EMPTY_INPUT);
+            jlException.setVisible(true);
+            System.out.println("App.java says -> " + e);
+            return;
+        }
+        ArrayList<Product> products = ProductController.search(pattern);
+        jtableProducts.setModel(new ProductTableModel(products));
+    }//GEN-LAST:event_jbSearchByPatternActionPerformed
+
+    private void jtfPatternKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfPatternKeyReleased
+        jtfPattern.setBorder(BORDER);
+        jlException.setVisible(false);
+    }//GEN-LAST:event_jtfPatternKeyReleased
+
+    private void jbSearchByCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSearchByCategoryActionPerformed
+        ArrayList<Product> products = ProductController.findByCategory(jcbCategory.getSelectedIndex()+1);
+        jtableProducts.setModel(new ProductTableModel(products));
+    }//GEN-LAST:event_jbSearchByCategoryActionPerformed
+
+    private void jtableProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtableProductsMouseClicked
+        int row = jtableProducts.getSelectedRow();
+        int index = Integer.valueOf(jtableProducts.getValueAt(row, 0).toString());
+        Product productToManipulate = ProductController.get(index);
+        EditAndDelete editAndDelete = new EditAndDelete(this, true, productToManipulate);
+        editAndDelete.setVisible(true);
+        editAndDelete.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    }//GEN-LAST:event_jtableProductsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -253,14 +235,15 @@ public class App extends javax.swing.JDialog {
     private javax.swing.JPanel content;
     private javax.swing.JScrollPane jScrollProducts;
     private javax.swing.JButton jbHome;
-    private javax.swing.JButton jbSearchxProductCategory;
-    private javax.swing.JButton jbSearchxProductName;
-    private javax.swing.JComboBox<String> jcbProductCategories;
+    private javax.swing.JButton jbSearchByCategory;
+    private javax.swing.JButton jbSearchByPattern;
+    private javax.swing.JComboBox<String> jcbCategory;
     private javax.swing.JLabel jlAddProduct;
+    private javax.swing.JLabel jlException;
     private javax.swing.JLabel jlName;
     private javax.swing.JLabel jlNow;
     private javax.swing.JTable jtableProducts;
-    private javax.swing.JTextField jtfProductName;
+    private javax.swing.JTextField jtfPattern;
     private javax.swing.JPanel menuBar;
     // End of variables declaration//GEN-END:variables
 }
