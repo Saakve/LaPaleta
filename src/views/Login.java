@@ -209,7 +209,7 @@ public class Login extends javax.swing.JFrame implements Messages{
 
     private void jbLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLoginActionPerformed
         String username = jtfUsername.getText().trim();
-        char password[] = jpfPassword.getPassword();
+        String password = String.valueOf(jpfPassword.getPassword());
         
         if(getFieldsStatus() != FIELDS_FILLED) {
             showException(getFieldsStatus());
@@ -228,12 +228,10 @@ public class Login extends javax.swing.JFrame implements Messages{
             }
             
             String realPassword = usuario.getString("uContraseña");
-                
-            for (int letra = 0; letra < password.length; letra++) {
-                if(password[letra] != realPassword.charAt(letra)){
-                    showException(INVALID_CREDENTIALS);
-                    return;
-                }
+            
+            if(realPassword.compareTo(password) != 0){
+                showException(INVALID_CREDENTIALS);
+                return;
             }
             
             App app = new App(this, true);
