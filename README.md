@@ -13,8 +13,8 @@ la búsqueda es realizada con base el nombre, alias, clave y categoría del prod
 ### ¿Cómo buco un producto?
 Para ello cuenta con 2 barras de búsqueda.
 
-La primera realiza la búsqueda con base al texto ingresado y arroja productos cu
-yos nombres, alias o clave coincide con el texto ingresado.
+La primera realiza la búsqueda con base al texto ingresado y arroja productos cuyos 
+nombres, alias o clave coincide con el texto ingresado.
 
 La segunda forma se realiza con base a la categoria seleccionada en la lista 
 desplegable. Es decir arroja productos donde su categoria es igual a la elegida. 
