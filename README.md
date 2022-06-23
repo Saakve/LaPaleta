@@ -1,5 +1,7 @@
 # La Paleta.
 Proyecto escolar creado con JAVA y MARIADB como base de datos.
+Use el usuario "root" sin contraseña para conectarme a la base de datos. 
+Por lo que debe coincidir ese usuario con el que posea en su equipo.
 
 ## Pasos para ejecutar.
 1. Agregar a la carpeta "Libraries" el conector a la base de datos 
