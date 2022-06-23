@@ -1,12 +1,10 @@
-package vistas;
+package views;
 
 import controllers.CategoryController;
 import controllers.ProductController;
 import entities.Product;
 import java.util.ArrayList;
 import javax.swing.JDialog;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,7 +17,17 @@ public class App extends javax.swing.JDialog implements Messages{
      */
     public App(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        setUndecorated(true);
         initComponents();
+        setLocationRelativeTo(parent);
+    }
+    
+    /**
+     * Refresh the table with the new products.
+     * @param newProducts 
+     */
+    public void refreshJtableProducts(ArrayList<Product> newProducts) {
+        jtableProducts.setModel(new ProductTableModel(newProducts));
     }
 
     /**
@@ -56,7 +64,8 @@ public class App extends javax.swing.JDialog implements Messages{
         menuBar.add(jlNow, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         jbHome.setBackground(new java.awt.Color(255, 255, 255));
-        jbHome.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\home.png")); // NOI18N
+        jbHome.setForeground(new java.awt.Color(255, 255, 255));
+        jbHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/sign-out.png"))); // NOI18N
         jbHome.setBorder(null);
         jbHome.setBorderPainted(false);
         jbHome.setContentAreaFilled(false);
@@ -66,7 +75,7 @@ public class App extends javax.swing.JDialog implements Messages{
                 jbHomeActionPerformed(evt);
             }
         });
-        menuBar.add(jbHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 0, 38, 31));
+        menuBar.add(jbHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 0, 38, 31));
 
         getContentPane().add(menuBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 663, 34));
 
@@ -74,7 +83,7 @@ public class App extends javax.swing.JDialog implements Messages{
         content.setMaximumSize(new java.awt.Dimension(659, 442));
         content.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jbSearchByCategory.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
+        jbSearchByCategory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         jbSearchByCategory.setContentAreaFilled(false);
         jbSearchByCategory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jbSearchByCategory.addActionListener(new java.awt.event.ActionListener() {
@@ -84,7 +93,7 @@ public class App extends javax.swing.JDialog implements Messages{
         });
         content.add(jbSearchByCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 29, 29));
 
-        jbSearchByPattern.setIcon(new javax.swing.ImageIcon("C:\\Users\\Saske\\Documents\\Proyectos\\LaPaleta\\icons\\search.png")); // NOI18N
+        jbSearchByPattern.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         jbSearchByPattern.setContentAreaFilled(false);
         jbSearchByPattern.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jbSearchByPattern.addActionListener(new java.awt.event.ActionListener() {
@@ -105,7 +114,7 @@ public class App extends javax.swing.JDialog implements Messages{
         });
         content.add(jtfPattern, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 460, 29));
 
-        jtableProducts.setModel(new vistas.ProductTableModel(ProductController.getProducts(1, 15)));
+        jtableProducts.setModel(new views.ProductTableModel(ProductController.getProducts(1, 15)));
         jtableProducts.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtableProducts.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jtableProducts.setRowHeight(20);
@@ -142,31 +151,30 @@ public class App extends javax.swing.JDialog implements Messages{
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbHomeActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jbHomeActionPerformed
 
     private void jlAddProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlAddProductMouseClicked
         AddProduct addProduct = new AddProduct(this, true);
         addProduct.setVisible(true);
         addProduct.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        DefaultTableModel newModel = (DefaultTableModel) jtableProducts.getModel();
-        Object nuevo[] = {1,2,3,4,5,6};
-        newModel.addRow(nuevo);
+        ArrayList<Product> newProducts = ((ProductTableModel) jtableProducts.getModel()).getProducts();
+        newProducts.add(ProductController.getLastProduct());
+        refreshJtableProducts(newProducts);
     }//GEN-LAST:event_jlAddProductMouseClicked
 
     private void jbSearchByPatternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSearchByPatternActionPerformed
         String pattern = jtfPattern.getText();
-        try {
-            if(pattern.length() == 0) throw new Exception("EMPTY_INPUT");
-        } catch(Exception e) {
+        
+        if(pattern.isEmpty()) {
             jtfPattern.setBorder(BORDER_EXCEPTION);
             jlException.setText(EMPTY_INPUT);
             jlException.setVisible(true);
-            System.out.println("App.java says -> " + e);
             return;
         }
+        
         ArrayList<Product> products = ProductController.search(pattern);
-        jtableProducts.setModel(new ProductTableModel(products));
+        refreshJtableProducts(products);
     }//GEN-LAST:event_jbSearchByPatternActionPerformed
 
     private void jtfPatternKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfPatternKeyReleased
@@ -176,16 +184,33 @@ public class App extends javax.swing.JDialog implements Messages{
 
     private void jbSearchByCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSearchByCategoryActionPerformed
         ArrayList<Product> products = ProductController.findByCategory(jcbCategory.getSelectedIndex()+1);
-        jtableProducts.setModel(new ProductTableModel(products));
+        refreshJtableProducts(products);
     }//GEN-LAST:event_jbSearchByCategoryActionPerformed
 
     private void jtableProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtableProductsMouseClicked
         int row = jtableProducts.getSelectedRow();
-        int index = Integer.valueOf(jtableProducts.getValueAt(row, 0).toString());
+        int index = (int) jtableProducts.getValueAt(row, 0);
         Product productToManipulate = ProductController.get(index);
+        
         EditAndDelete editAndDelete = new EditAndDelete(this, true, productToManipulate);
         editAndDelete.setVisible(true);
         editAndDelete.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        
+        ArrayList<Product> newProducts = ((ProductTableModel) jtableProducts.getModel()).getProducts();
+        
+        if(editAndDelete.getActionPerformed() == EditAndDelete.PRODUCT_DELETED){
+            newProducts.removeIf(product -> (product.getProductId() == index));
+        }
+        
+        if(editAndDelete.getActionPerformed() == EditAndDelete.PRODUCT_EDITED){
+            for (int product = 0; product < newProducts.size(); product++) {
+                if(newProducts.get(product).getProductId() == index) {
+                    newProducts.set(product, ProductController.get(index));
+                }
+            }
+        }
+        
+        refreshJtableProducts(newProducts);
     }//GEN-LAST:event_jtableProductsMouseClicked
 
     /**

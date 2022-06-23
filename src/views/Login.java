@@ -1,6 +1,8 @@
-package vistas;
+package views;
 
 import conexionDB.ConnectionToLapaletadb;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.sql.*;
 import javax.swing.JDialog;
 
@@ -10,11 +12,74 @@ import javax.swing.JDialog;
  */
 public class Login extends javax.swing.JFrame implements Messages{ 
     
+    private static final int FIELDS_FILLED = 1;
+    private static final int USERNAME_FIELD_EMPTY = 2;
+    private static final int PASSWORD_FIELD_EMPTY = 3;
+    private static final int FIELD_EMPTIES = 4;
+    private static final int INVALID_CREDENTIALS = 5;
+    
     /**
      * Creates new form Inicio
      */
     public Login() {
         initComponents();
+        center();
+    }
+    
+    /**
+     * Center the Jframe relative to the monitor.
+     */
+    private void center(){
+        Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+        int x = center.x - (getWidth()/2);
+        int y = center.y - (getHeight()/2);
+        center.move(x, y);
+        setLocation(center);
+    }
+    
+    /**
+     * Return a int that represents if the fields are filled, empties, 
+     * just username is empty or just  password is empty.
+     */
+    private int getFieldsStatus(){
+        String username = jtfUsername.getText().trim();
+        char password[] = jpfPassword.getPassword();
+        
+        if(username.isEmpty() && password.length == 0) return FIELD_EMPTIES;
+        if(username.isEmpty()) return USERNAME_FIELD_EMPTY;
+        if(password.length == 0) return PASSWORD_FIELD_EMPTY;
+        
+        return FIELDS_FILLED;
+    }
+    
+    /**
+     * Show the exception to User dependig on the status fields.
+     */
+    private void showException(int status){
+        jlExcepcion.setText(EMPTY_INPUT);
+        jlExcepcion.setVisible(true);
+        
+        if(status == USERNAME_FIELD_EMPTY){
+            jtfUsername.setBorder(BORDER_EXCEPTION);
+            return;
+        }
+        
+        if(status == PASSWORD_FIELD_EMPTY){
+            jpfPassword.setBorder(BORDER_EXCEPTION);
+            return;
+        }
+        
+        if(status == FIELD_EMPTIES) {
+            jtfUsername.setBorder(BORDER_EXCEPTION);
+            jpfPassword.setBorder(BORDER_EXCEPTION);
+            return;
+        }
+        
+        if(status == INVALID_CREDENTIALS){
+            jlExcepcion.setText(ERROR_LOGIN);
+            jlExcepcion.setVisible(true);
+        }
+        
     }
 
     /**
@@ -33,7 +98,7 @@ public class Login extends javax.swing.JFrame implements Messages{
         jlTittle = new javax.swing.JLabel();
         jtfUsername = new javax.swing.JTextField();
         jpfPassword = new javax.swing.JPasswordField();
-        jbInicio = new javax.swing.JButton();
+        jbLogin = new javax.swing.JButton();
         jlExcepcion = new javax.swing.JLabel();
         title = new javax.swing.JPanel();
         jlTitleOne = new javax.swing.JLabel();
@@ -54,21 +119,21 @@ public class Login extends javax.swing.JFrame implements Messages{
         jlPlaceholderUser.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jlPlaceholderUser.setForeground(new java.awt.Color(204, 204, 204));
         jlPlaceholderUser.setText(" Usuario");
-        content.add(jlPlaceholderUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
+        content.add(jlPlaceholderUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, 185, 33));
 
         jlPlaceholderPassword.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jlPlaceholderPassword.setForeground(new java.awt.Color(204, 204, 204));
         jlPlaceholderPassword.setText(" Contraseña");
-        content.add(jlPlaceholderPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
+        content.add(jlPlaceholderPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 250, 185, 33));
 
         jlTitle.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jlTitle.setText("Bienvenido");
-        content.add(jlTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 70, -1, -1));
+        content.add(jlTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
 
         jlTittle.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jlTittle.setForeground(new java.awt.Color(102, 255, 255));
         jlTittle.setText("Paletero");
-        content.add(jlTittle, new org.netbeans.lib.awtextra.AbsoluteConstraints(221, 70, -1, -1));
+        content.add(jlTittle, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 120, -1, -1));
 
         jtfUsername.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         jtfUsername.setForeground(new java.awt.Color(102, 102, 102));
@@ -78,43 +143,33 @@ public class Login extends javax.swing.JFrame implements Messages{
                 jtfUsernameKeyReleased(evt);
             }
         });
-        content.add(jtfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 140, 185, 33));
+        content.add(jtfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, 185, 33));
 
         jpfPassword.setBorder(BORDER);
-        jpfPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jpfPasswordActionPerformed(evt);
-            }
-        });
         jpfPassword.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jpfPasswordKeyReleased(evt);
             }
         });
-        content.add(jpfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(111, 203, 185, 33));
+        content.add(jpfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 250, 185, 33));
 
-        jbInicio.setBackground(new java.awt.Color(0, 204, 204));
-        jbInicio.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jbInicio.setForeground(new java.awt.Color(255, 255, 255));
-        jbInicio.setText("Iniciar Sesión");
-        jbInicio.setBorderPainted(false);
-        jbInicio.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbInicioMouseClicked(evt);
-            }
-        });
-        jbInicio.addActionListener(new java.awt.event.ActionListener() {
+        jbLogin.setBackground(new java.awt.Color(0, 204, 204));
+        jbLogin.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        jbLogin.setForeground(new java.awt.Color(255, 255, 255));
+        jbLogin.setText("Iniciar Sesión");
+        jbLogin.setBorderPainted(false);
+        jbLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbInicioActionPerformed(evt);
+                jbLoginActionPerformed(evt);
             }
         });
-        content.add(jbInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(149, 289, -1, -1));
+        content.add(jbLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 340, -1, -1));
 
         jlExcepcion.setForeground(new java.awt.Color(255, 0, 0));
-        content.add(jlExcepcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, -1, 20));
+        content.add(jlExcepcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 160, -1, 20));
         jlExcepcion.setVisible(false);
 
-        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 381, 409));
+        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 310, 409));
 
         title.setBackground(new java.awt.Color(255, 153, 255));
 
@@ -131,20 +186,20 @@ public class Login extends javax.swing.JFrame implements Messages{
         titleLayout.setHorizontalGroup(
             titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(titleLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(24, 24, 24)
                 .addGroup(titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jlTitleOne)
                     .addComponent(jlTitleTwo))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         titleLayout.setVerticalGroup(
             titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titleLayout.createSequentialGroup()
+                .addContainerGap(156, Short.MAX_VALUE)
                 .addComponent(jlTitleTwo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jlTitleOne, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(276, Short.MAX_VALUE))
+                .addGap(155, 155, 155))
         );
 
         getContentPane().add(title, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 409));
@@ -152,69 +207,47 @@ public class Login extends javax.swing.JFrame implements Messages{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jbInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInicioActionPerformed
+    private void jbLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLoginActionPerformed
         String username = jtfUsername.getText().trim();
         char password[] = jpfPassword.getPassword();
-        byte flujo = 0;
         
-        if(username.isEmpty()) flujo += 1;
-        if(password.length == 0) flujo += 2;
-        
-        if(flujo > 0){
-            jlExcepcion.setText(EMPTY_INPUT);
-            jlExcepcion.setVisible(true);
-            
-            switch (flujo) {
-                case 1 -> jtfUsername.setBorder(BORDER_EXCEPTION);
-                case 2 -> jpfPassword.setBorder(BORDER_EXCEPTION);
-                case 3 -> {
-                    jtfUsername.setBorder(BORDER_EXCEPTION);
-                    jpfPassword.setBorder(BORDER_EXCEPTION);
-                }
-            }
+        if(getFieldsStatus() != FIELDS_FILLED) {
+            showException(getFieldsStatus());
             return;
         }
          
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
-            ConnectionToLapaletadb consulta = new ConnectionToLapaletadb();
             String statement = "SELECT * FROM usuario WHERE uUsuario = '{?}' ";
             statement = statement.replace("{?}", username);
-            ResultSet rs = consulta.executeQuery(statement);
+            ResultSet usuario = cn.executeQuery(statement);
             
-            if (!rs.next()) {
-                jlExcepcion.setText(ERROR_LOGIN);
-                jlExcepcion.setVisible(true);
+            if (!usuario.next()) {
+                showException(INVALID_CREDENTIALS);
                 return;
             }
             
-            String realPassword = rs.getString("uContraseña");
+            String realPassword = usuario.getString("uContraseña");
                 
-            for (int i = 0; i < password.length; i++) {
-                if(password[i] != realPassword.charAt(i)){
-                    jlExcepcion.setText(ERROR_LOGIN);
-                    jlExcepcion.setVisible(true);
+            for (int letra = 0; letra < password.length; letra++) {
+                if(password[letra] != realPassword.charAt(letra)){
+                    showException(INVALID_CREDENTIALS);
                     return;
                 }
             }
             
-            App app = new App(this, false);
+            App app = new App(this, true);
             this.setVisible(false);
             app.setVisible(true);
             app.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             this.setVisible(true);
             
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("App.java says -> " + e);
+        } finally {
+            cn.close();
         }
-    }//GEN-LAST:event_jbInicioActionPerformed
-
-    private void jbInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbInicioMouseClicked
-
-    }//GEN-LAST:event_jbInicioMouseClicked
-
-    private void jpfPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpfPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jpfPasswordActionPerformed
+    }//GEN-LAST:event_jbLoginActionPerformed
 
     private void jtfUsernameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfUsernameKeyReleased
         jlPlaceholderUser.setVisible(false);
@@ -228,9 +261,6 @@ public class Login extends javax.swing.JFrame implements Messages{
         jlExcepcion.setVisible(false);
     }//GEN-LAST:event_jpfPasswordKeyReleased
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -266,7 +296,7 @@ public class Login extends javax.swing.JFrame implements Messages{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel content;
-    private javax.swing.JButton jbInicio;
+    private javax.swing.JButton jbLogin;
     private javax.swing.JLabel jlExcepcion;
     private javax.swing.JLabel jlPlaceholderPassword;
     private javax.swing.JLabel jlPlaceholderUser;

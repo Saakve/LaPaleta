@@ -21,8 +21,8 @@ public class StockController {
      * Return the index of the last stock added.
      */
     public static int getLastIndex() {
-        String statement = "SELECT MAX({pkey}) FROM inventarioProducto"
-                .replace("{pkey}", ATTRIBUTES[0]);
+        String statement = "SELECT MAX({pkey}) FROM inventarioProducto";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
         int index = 0;
         
         ConnectionToLapaletadb cn = new ConnectionToLapaletadb();

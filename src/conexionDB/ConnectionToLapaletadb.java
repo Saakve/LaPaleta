@@ -1,8 +1,10 @@
 package conexionDB;
 
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  * It's a wraper to Coneection and connects to lapaletadb database.
@@ -25,11 +27,11 @@ public class ConnectionToLapaletadb {
             connection = DriverManager.getConnection(url, user, password);
             
             if(connection != null){
-                System.out.println("CONEXION EXITOSA");
+                System.out.println("CONNECTION SUCCESSFUL");
             }
             
         } catch (SQLException e){
-            System.out.println("Conexion.java says -> ERROR" + e);
+            System.out.println("ConnectionToLapaletadb.java says -> ERROR" + e);
         }
     }
     
@@ -78,7 +80,7 @@ public class ConnectionToLapaletadb {
         try {
             connection.close();
         } catch (SQLException ex) {
-            System.out.println("Conexion.java says -> ERROR" + ex);
+            System.out.println("ConnectionToLapaletadb.java says -> ERROR" + ex);
         }
     }
 }

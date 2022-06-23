@@ -119,7 +119,9 @@ public class CategoryController {
         ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
         try {
             ResultSet indexObject = cn.executeQuery(statement);
+            
             if(!indexObject.next()) return NOT_FOUND;
+            
             index = indexObject.getInt(ATTRIBUTES[0]);
         } catch(SQLException e) {
             System.out.println("Category.java says -> Eror: " + e);
@@ -170,7 +172,7 @@ public class CategoryController {
     }
     
     public static int getNumberOfCategories() {
-        String statement = "SELECT COUNT(*) FROM categoria";
+        String statement = "SELECT COUNT(*) as CANTIDAD FROM categoria";
         int numberOfCategories = 0;
         
         ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
@@ -179,7 +181,7 @@ public class CategoryController {
             
             if(!numbersOfCategoriesObject.next()) numberOfCategories = ERROR_COUNT;
             
-            numberOfCategories = numbersOfCategoriesObject.getInt(1);
+            numberOfCategories = numbersOfCategoriesObject.getInt("CANTIDAD");
             
         } catch (SQLException e) {
             numberOfCategories = ERROR_COUNT;

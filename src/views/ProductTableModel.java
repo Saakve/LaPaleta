@@ -1,4 +1,4 @@
-package vistas;
+package views;
 
 import controllers.CategoryController;
 import controllers.StockController;
@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * Create a TableModel used to show the products in JTable.
  * @author Saakve
  */
 public class ProductTableModel extends AbstractTableModel{
-    private String[] columnNames = {"Clave", "Nombre", "Precio", "Alias", "Cantidad", "Categoria"};
-    private int numberOfRows;
-    private Object[][] rows;
-    private ArrayList<Product> products;
+    private final String[] columnNames = {"Clave", "Nombre", "Precio", "Alias", "Cantidad", "Categoria"};
+    private final int numberOfRows;
+    private final Object[][] rows;
+    private final ArrayList<Product> products;
     
     public ProductTableModel(ArrayList<Product> products) {
         this.products = products;
@@ -31,6 +31,9 @@ public class ProductTableModel extends AbstractTableModel{
         }
     }
 
+    /**
+     * Return the products used to make the table.
+     */
     public ArrayList<Product> getProducts(){
         return products;
     }

@@ -1,13 +1,9 @@
-package vistas;
+package views;
 
 import controllers.CategoryController;
 import controllers.ProductController;
 import entities.Product;
-import java.awt.Component;
-import javax.swing.JTable;
-import static vistas.Messages.BORDER_EXCEPTION;
-import static vistas.Messages.EMPTY_INPUT;
-import static vistas.Messages.INVALID_INPUT;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,25 +12,84 @@ import static vistas.Messages.INVALID_INPUT;
 public class EditAndDelete extends javax.swing.JDialog implements Messages {
     
     private Product productToManipulate;
+    public static final int PRODUCT_DELETED = 1;
+    public static final int PRODUCT_EDITED = 2;
+    private static final int OK = 3;
+    private static final int PRICE_INVALID = 4;
+    private static final int EMPTIES = 5;
+    private int actionPerformed;
     
     /**
-     * Creates new form EditAndDelete
+     * Creates new form EditAndDelete from a Frame.
      */
     public EditAndDelete(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(parent);
+        fillFields();
     }
     
+    /**
+     * Creates new form EditAndDelete from a JDialog.
+     */
     public EditAndDelete(javax.swing.JDialog parent, boolean modal, Product product){
         super(parent, modal);
-        initComponents();
         productToManipulate = product;
-        jlbProductId.setText(Integer.toString(product.getProductId()));
+        initComponents();
+        setLocationRelativeTo(parent);
+        fillFields();
+    }
+    
+    /**
+     * Fill each field on JDialog with the product data selected.
+     */
+    public void fillFields(){
+        jlbProductId.setText(Integer.toString(productToManipulate.getProductId()));
         jlbException.setVisible(false);
-        jtfName.setText(product.getName());
-        jtfAlias.setText(product.getAlias());
-        jtfPrice.setText(Double.toString(product.getPrice()));
-        jcbCategories.setSelectedIndex(product.getCategoryId() - 1);
+        jtfName.setText(productToManipulate.getName());
+        jtfAlias.setText(productToManipulate.getAlias());
+        jtfPrice.setText(Double.toString(productToManipulate.getPrice()));
+        jcbCategories.setSelectedIndex(productToManipulate.getCategoryId() - 1);
+    }
+    
+    /**
+     * Return a int that represents if the fields are ok, empties, 
+     * or just price input is invalid.
+     */
+    private int getFieldStatus(){
+        if(jtfName.getText().isEmpty() || jtfAlias.getText().isEmpty() || jtfPrice.getText().isEmpty()) return EMPTIES;
+        
+        try {
+            Double.valueOf(jtfPrice.getText());
+        } catch (NumberFormatException e) {
+            return PRICE_INVALID;
+        }
+        
+        return OK;
+    }
+    
+    /**
+     * Show the exception to User dependig on the status fields.
+     */
+    private void showException(int status){
+        if(status == EMPTIES){
+            jlbException.setText(EMPTY_INPUT);
+            jlbException.setVisible(true);
+            return;
+        }
+        
+        if(status == PRICE_INVALID){
+            jlbException.setText(INVALID_INPUT);
+            jlbException.setVisible(true);
+            jtfPrice.setBorder(BORDER_EXCEPTION);
+        }
+    }
+    
+    /**
+     * Return a int that represents the action performed by JDialog.
+     */
+    public int getActionPerformed(){
+        return actionPerformed;
     }
 
     /**
@@ -69,27 +124,32 @@ public class EditAndDelete extends javax.swing.JDialog implements Messages {
         content.setBackground(new java.awt.Color(255, 255, 255));
         content.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jlbProductIdField.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbProductIdField.setText("Clave");
-        content.add(jlbProductIdField, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 50, -1, 20));
-        content.add(jlbProductId, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 50, -1, 20));
+        content.add(jlbProductIdField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, 20));
+        content.add(jlbProductId, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 20, -1, 20));
 
+        jlbName.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbName.setText("Nombre");
-        content.add(jlbName, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, -1, -1));
+        content.add(jlbName, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, -1, -1));
 
+        jlbPrice.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbPrice.setText("Precio");
-        content.add(jlbPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, -1, -1));
+        content.add(jlbPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
 
+        jlbAlias.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbAlias.setText("Alias");
-        content.add(jlbAlias, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, -1, -1));
+        content.add(jlbAlias, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, -1, -1));
 
         jcbCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {CategoryController.getCategory(1).getName(),CategoryController.getCategory(2).getName(),CategoryController.getCategory(3).getName()}));
-        content.add(jcbCategories, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 240, 190, -1));
+        content.add(jcbCategories, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 210, 190, -1));
 
+        jlbCategory.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbCategory.setText("Categoria");
-        content.add(jlbCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, -1, -1));
+        content.add(jlbCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, -1, -1));
 
         jtfAlias.setText("jTextField1");
-        content.add(jtfAlias, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 190, -1));
+        content.add(jtfAlias, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 190, -1));
 
         jtfPrice.setText("jTextField2");
         jtfPrice.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -97,39 +157,45 @@ public class EditAndDelete extends javax.swing.JDialog implements Messages {
                 jtfPriceKeyReleased(evt);
             }
         });
-        content.add(jtfPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 140, 190, -1));
+        content.add(jtfPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 110, 190, -1));
 
         jtfName.setText("jTextField3");
-        content.add(jtfName, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 90, 190, -1));
+        content.add(jtfName, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 190, -1));
 
+        jbttAccept.setBackground(new java.awt.Color(122, 204, 30));
         jbttAccept.setText("Aceptar");
+        jbttAccept.setBorderPainted(false);
         jbttAccept.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbttAcceptActionPerformed(evt);
             }
         });
-        content.add(jbttAccept, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 330, -1, -1));
+        content.add(jbttAccept, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, -1, -1));
 
+        jbttCancel.setBackground(new java.awt.Color(255, 51, 51));
         jbttCancel.setText("Cancelar");
+        jbttCancel.setBorderPainted(false);
         jbttCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbttCancelActionPerformed(evt);
             }
         });
-        content.add(jbttCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 330, -1, -1));
+        content.add(jbttCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 300, -1, -1));
 
+        jbttDelete.setBackground(new java.awt.Color(255, 51, 51));
         jbttDelete.setText("Eliminar");
+        jbttDelete.setBorderPainted(false);
         jbttDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbttDeleteActionPerformed(evt);
             }
         });
-        content.add(jbttDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 300, -1, -1));
+        content.add(jbttDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 270, -1, -1));
 
         jlbException.setForeground(new java.awt.Color(255, 0, 0));
         content.add(jlbException, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, 20));
 
-        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 380, 370));
+        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 340));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -139,32 +205,23 @@ public class EditAndDelete extends javax.swing.JDialog implements Messages {
     }//GEN-LAST:event_jbttCancelActionPerformed
 
     private void jbttAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbttAcceptActionPerformed
-        try {
-            String name = jtfName.getText();
-            String alias = jtfAlias.getText();
-            
-            if(name.length() == 0 || alias.length() == 0){
-                throw new Exception("EMPTY_INPUT");
-            }
-            
-            int index = productToManipulate.getProductId();
-            int inventoryId = productToManipulate.getInventoryId();
-            Double price = Double.valueOf(jtfPrice.getText());
-            
-            Product newProduct = new Product(index, name, price, alias, inventoryId,jcbCategories.getSelectedIndex()+1);
-            ProductController.update(index, newProduct);
-        } catch (NumberFormatException e) {
-            jlbException.setVisible(true);
-            jlbException.setText(INVALID_INPUT);
-            jtfPrice.setBorder(BORDER_EXCEPTION);
-            System.out.println("EditAndDelete.java says -> " + e);
+        if(getFieldStatus() != OK){
+            showException(getFieldStatus());
             return;
-        } catch (Exception ex) {
-            jlbException.setVisible(true);
-            jlbException.setText(EMPTY_INPUT);
-            System.out.println("EditAndDelete.java says -> " + ex);
-            return;
-        }
+        } 
+        
+        if(JOptionPane.showConfirmDialog(this, "¿Está seguro?") != JOptionPane.OK_OPTION) return;
+        
+        String name = jtfName.getText();
+        String alias = jtfAlias.getText();
+        int index = productToManipulate.getProductId();
+        int inventoryId = productToManipulate.getInventoryId();
+        Double price = Double.valueOf(jtfPrice.getText()); 
+            
+        Product productUpdated = new Product(index, name, price, alias, inventoryId,jcbCategories.getSelectedIndex()+1);
+        ProductController.update(index, productUpdated);
+        
+        actionPerformed = PRODUCT_EDITED;
         this.dispose();
     }//GEN-LAST:event_jbttAcceptActionPerformed
 
@@ -174,7 +231,10 @@ public class EditAndDelete extends javax.swing.JDialog implements Messages {
     }//GEN-LAST:event_jtfPriceKeyReleased
 
     private void jbttDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbttDeleteActionPerformed
+        if(JOptionPane.showConfirmDialog(this, "¿Está seguro?") != JOptionPane.OK_OPTION) return;
+        
         ProductController.delete(productToManipulate.getProductId());
+        actionPerformed = PRODUCT_DELETED;
         this.dispose();
     }//GEN-LAST:event_jbttDeleteActionPerformed
 

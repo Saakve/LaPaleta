@@ -25,6 +25,7 @@ public class ProductController {
     public static final int NEW_PRODUCT = -1;
     public static final int NOT_FOUND = -2;
     public static final int ERROR_COUNT = -3;
+    public static final int INVALID_INDEX = -4;
     
     /**
      * Return a string with the attributes of product table.
@@ -366,5 +367,65 @@ public class ProductController {
         }
         
         return ConnectionToLapaletadb.UPDATE_SUCCESSFULL;
+    }
+    
+    /**
+     * Return the last product added;
+     */
+    public static Product getLastProduct(){
+        String statement = "SELECT * FROM producto WHERE {pkey} = {index}";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
+        statement = statement.replace("{index}", Integer.toString(getLastIndex()));
+        
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+        try {
+            ResultSet lastProduct = cn.executeQuery(statement);
+            
+            if (lastProduct.next()) {
+                return new Product(
+                        lastProduct.getInt(ATTRIBUTES[0]),
+                        lastProduct.getString(ATTRIBUTES[1]),
+                        lastProduct.getDouble(ATTRIBUTES[2]),
+                        lastProduct.getString(ATTRIBUTES[3]),
+                        lastProduct.getInt(ATTRIBUTES[4]),
+                        lastProduct.getInt(ATTRIBUTES[5])
+                );
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("ProductController.java says -> Error: " + e);
+        } finally {
+            cn.close();
+        }
+        
+        return new Product();
+    }
+    
+    /**
+     * Return a int that represens the index of the last product added.
+     */
+    public static int getLastIndex() {
+        String statement = "SELECT MAX({pkey}) FROM producto";
+        statement = statement.replace("{pkey}", ATTRIBUTES[0]);
+        int index = 0;
+        
+        ConnectionToLapaletadb cn = new ConnectionToLapaletadb();
+        try {
+            ResultSet lastIndexObject = cn.executeQuery(statement);
+            
+            if (!lastIndexObject.next()) {
+                return INVALID_INDEX;
+            }
+            
+            index = lastIndexObject.getInt(1);
+
+        } catch (SQLException e) {
+            System.out.println("ProductController.java says -> Error: " + e);
+            return INVALID_INDEX;
+        } finally {
+            cn.close();
+        }
+        
+        return index;
     }
 }

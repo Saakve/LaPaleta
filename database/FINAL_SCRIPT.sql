@@ -13,10 +13,10 @@ CREATE TABLE usuario (
 );
 
 INSERT INTO usuario (uNombre, uCargo, uUsuario,uContraseña, uCorreoElectrónico) 
-		 VALUES ("Kevin Adrian Avelino Sánchez", "Gerente", "saakve","pr03b4","avesanke@gmail.com");
+		 VALUES ("Kevin Adrian Avelino Sánchez", "Gerente", "saakve","1234","avesanke@gmail.com");
 
 INSERT INTO usuario (uNombre, uCargo, uUsuario,uContraseña, uCorreoElectrónico)
-		 VALUES ("Kevin Domínguez Aguilera", "Gerente","kevdag21","UgSKcdc#1","Kevin.dominguez2002@hotmail.com");
+		 VALUES ("Kevin Domínguez Aguilera", "Gerente","kevdag21","1234","Kevin.dominguez2002@hotmail.com");
 
 CREATE TABLE producto (
 	producto_id INT(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,

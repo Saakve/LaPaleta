@@ -1,8 +1,9 @@
-package vistas;
+package views;
 
 import controllers.CategoryController;
 import controllers.ProductController;
 import entities.Product;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -10,19 +11,61 @@ import entities.Product;
  */
 public class AddProduct extends javax.swing.JDialog implements Messages {
     
+    private static final int OK = 1;
+    private static final int PRICE_INVALID = 2;
+    private static final int EMPTIES = 3;
+    
     /**
-     * Creates new form AddProduct
+     * Creates new form AddProduct from a Frame
      */
     public AddProduct(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         jlbException.setVisible(false);
+        setLocationRelativeTo(parent);
     }
     
+    /**
+     * Creates new form AddProduct from a JDialog.
+     */
     public AddProduct(javax.swing.JDialog parent, boolean modal){
         super(parent, modal);
         initComponents();
         jlbException.setVisible(false);
+        setLocationRelativeTo(parent);
+    }
+    
+    /**
+     * Return a int that represents if the fields are ok, empties, 
+     * or just price input is invalid.
+     */
+    private int getFieldStatus(){
+        if(jtfName.getText().isEmpty() || jtfAlias.getText().isEmpty() || jtfPrice.getText().isEmpty()) return EMPTIES;
+        
+        try {
+            Double.valueOf(jtfPrice.getText());
+        } catch (NumberFormatException e) {
+            return PRICE_INVALID;
+        }
+        
+        return OK;
+    }
+    
+    /**
+     * Show the exception to User dependig on the status fields.
+     */
+    private void showException(int status){
+        if(status == EMPTIES){
+            jlbException.setText(EMPTY_INPUT);
+            jlbException.setVisible(true);
+            return;
+        }
+        
+        if(status == PRICE_INVALID){
+            jlbException.setText(INVALID_INPUT);
+            jlbException.setVisible(true);
+            jtfPrice.setBorder(BORDER_EXCEPTION);
+        }
     }
     
     private void cleanInputs(){
@@ -54,20 +97,27 @@ public class AddProduct extends javax.swing.JDialog implements Messages {
         jlbException = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Nuevo producto");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         content.setBackground(new java.awt.Color(255, 255, 255));
         content.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jlblName.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlblName.setText("Nombre");
         content.add(jlblName, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, 20));
 
+        jlbPrice.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbPrice.setText("Precio");
         content.add(jlbPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, -1, -1));
 
+        jlbAlias.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbAlias.setText("Alias");
         content.add(jlbAlias, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
+        jlbCategory.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jlbCategory.setText("Categoria");
         content.add(jlbCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, -1, -1));
         content.add(jtfName, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 50, 140, -1));
@@ -83,7 +133,9 @@ public class AddProduct extends javax.swing.JDialog implements Messages {
         jcbCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {CategoryController.getCategory(1).getName(),CategoryController.getCategory(2).getName(),CategoryController.getCategory(3).getName()}));
         content.add(jcbCategories, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 200, 140, -1));
 
+        jBttAccept.setBackground(new java.awt.Color(122, 204, 30));
         jBttAccept.setText("Aceptar");
+        jBttAccept.setBorderPainted(false);
         jBttAccept.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBttAcceptActionPerformed(evt);
@@ -91,7 +143,9 @@ public class AddProduct extends javax.swing.JDialog implements Messages {
         });
         content.add(jBttAccept, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 270, -1, -1));
 
+        jBttCancel.setBackground(new java.awt.Color(255, 51, 51));
         jBttCancel.setText("Cancelar");
+        jBttCancel.setBorderPainted(false);
         jBttCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBttCancelActionPerformed(evt);
@@ -105,35 +159,26 @@ public class AddProduct extends javax.swing.JDialog implements Messages {
         content.add(jlbException, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, -1, -1));
         jlbException.getAccessibleContext().setAccessibleDescription("");
 
-        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 310, 330));
+        getContentPane().add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 310, 320));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBttAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBttAcceptActionPerformed
-        try {
-            String name = jtfName.getText();
-            String alias = jtfAlias.getText();
-            
-            if(name.length() == 0 || alias.length() == 0){
-                throw new Exception("EMPTY_INPUT");
-            }
-            
-            Double price = Double.valueOf(jtfPrice.getText());
-            
-            Product productToAdd = new Product(name, price, alias, jcbCategories.getSelectedIndex()+1);
-            ProductController.add(productToAdd);
-            cleanInputs();
-        } catch (NumberFormatException e) {
-            jlbException.setVisible(true);
-            jlbException.setText(INVALID_INPUT);
-            jtfPrice.setBorder(BORDER_EXCEPTION);
-            
-        } catch (Exception ex) {
-            jlbException.setVisible(true);
-            jlbException.setText(EMPTY_INPUT);
-            System.out.println("AddProduct.java says -> " + ex);
-        }
+        if(getFieldStatus() != OK){
+            showException(getFieldStatus());
+            return;
+        } 
+        
+        if(JOptionPane.showConfirmDialog(this, "¿Está seguro?") != JOptionPane.OK_OPTION) return;
+        
+        String name = jtfName.getText();
+        String alias = jtfAlias.getText();
+        Double price = Double.valueOf(jtfPrice.getText());
+
+        Product newProduct = new Product(name, price, alias, jcbCategories.getSelectedIndex() + 1);
+        ProductController.add(newProduct);
+        cleanInputs();
     }//GEN-LAST:event_jBttAcceptActionPerformed
 
     private void jBttCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBttCancelActionPerformed
