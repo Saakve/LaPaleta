@@ -1,4 +1,6 @@
 # La Paleta.
+Proyecto escolar creado con JAVA y MARIADB como base de datos.
+
 ## Pasos para ejecutar.
 1. Agregar a la carpeta "Libraries" el conector a la base de datos 
    (mysql-connector...).
@@ -7,8 +9,13 @@
 4. Disfrute del proyecto!!!
 
 ## ¿Qué puede hacer?
-El CRUD básico de productos es decir agregar, buscar, editar y eliminar. Donde
-la búsqueda es realizada con base el nombre, alias, clave y categoría del producto.
+Iniciar sesión y realizar el CRUD básico de productos. Es decir agregar, buscar, 
+editar y eliminar. Donde la búsqueda es realizada con base el nombre, alias, clave 
+y categoría del producto.
+
+### ¿Cómo inicio sesión?
+Solo ingrese el usuario y contraseña. El usuario es "saakve" y la contraseña
+"1234". 
 
 ### ¿Cómo buco un producto?
 Para ello cuenta con 2 barras de búsqueda.
@@ -18,7 +25,6 @@ nombres, alias o clave coincide con el texto ingresado.
 
 La segunda forma se realiza con base a la categoria seleccionada en la lista 
 desplegable. Es decir arroja productos donde su categoria es igual a la elegida. 
-
 
 ### ¿Cómo agrego un producto?
 Seleccione el icono de más que se encuentra en la esquina inferior izquierda.
